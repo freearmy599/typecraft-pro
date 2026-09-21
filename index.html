@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TypeCraft Pro — Enterprise Multi-Tool Developer Suite</title>
-    <meta name="description" content="Lightning-fast client-side developer platform. Convert JSON to TypeScript, Zod, and Pydantic, generate mock API data, and manage session history instantly.">
+    <meta name="description" content="Lightning-fast client-side developer platform. Schema synthesis, mock data generation, JWT inspection, Base64/URL transformation, SQL formatting, and Cron analysis.">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -37,7 +37,7 @@
         pre::-webkit-scrollbar-thumb:hover, textarea::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.7); }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white" x-data="typeCraftApp()" @keydown.window.ctrl.enter="generate()">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white" x-data="typeCraftApp()" @keydown.window.ctrl.enter="if(activeTool==='synth') generate()">
 
     <!-- Header Navigation -->
     <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
@@ -50,9 +50,13 @@
             </div>
             
             <!-- Tool Mode Switcher Hub -->
-            <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl">
-                <button @click="activeTool = 'synth'" :class="activeTool === 'synth' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Synthesizer</button>
-                <button @click="activeTool = 'mock'" :class="activeTool === 'mock' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Mock Data</button>
+            <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl space-x-1 overflow-x-auto max-w-full">
+                <button @click="activeTool = 'synth'" :class="activeTool === 'synth' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">Synthesizer</button>
+                <button @click="activeTool = 'mock'" :class="activeTool === 'mock' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">Mock Data</button>
+                <button @click="activeTool = 'jwt'" :class="activeTool === 'jwt' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">JWT Decoder</button>
+                <button @click="activeTool = 'base64'" :class="activeTool === 'base64' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">Base64</button>
+                <button @click="activeTool = 'sql'" :class="activeTool === 'sql' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">SQL Formatter</button>
+                <button @click="activeTool = 'cron'" :class="activeTool === 'cron' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">Cron Explainer</button>
             </div>
         </div>
     </header>
@@ -72,7 +76,7 @@
         <!-- Left Workspace Column (Span 9) -->
         <div class="lg:col-span-9 flex flex-col space-y-6">
             
-            <!-- Tool 1: Schema Synthesizer View -->
+            <!-- Tool 1: Schema Synthesizer -->
             <div x-show="activeTool === 'synth'" class="flex flex-col space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
@@ -87,7 +91,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
-                    <!-- Input -->
                     <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
                         <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
                             <span class="font-semibold text-slate-300 uppercase tracking-wider">Input JSON</span>
@@ -106,7 +109,6 @@
                         </div>
                     </div>
 
-                    <!-- Output -->
                     <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl relative">
                         <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
                             <span class="font-semibold text-slate-300 uppercase tracking-wider" x-text="outputHeaderTitle"></span>
@@ -121,7 +123,7 @@
                 </div>
             </div>
 
-            <!-- Tool 2: Mock API Data Generator View -->
+            <!-- Tool 2: Mock API Data Generator -->
             <div x-show="activeTool === 'mock'" class="flex flex-col space-y-6" style="display: none;">
                 <div>
                     <h1 class="text-2xl font-extrabold tracking-tight text-white">Mock API Payload Generator</h1>
@@ -149,8 +151,129 @@
                 </div>
             </div>
 
-            <!-- Configuration & History Toolbar -->
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col space-y-3">
+            <!-- Tool 3: JWT Decoder -->
+            <div x-show="activeTool === 'jwt'" class="flex flex-col space-y-6" style="display: none;">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-extrabold tracking-tight text-white">JWT Decoder & Inspector</h1>
+                        <p class="text-sm text-slate-400 mt-0.5">Paste any JSON Web Token (JWT) to inspect header, payload claims, and expiration.</p>
+                    </div>
+                    <button @click="loadJwtSample()" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-indigo-400 text-xs px-3 py-1.5 rounded-lg font-medium transition self-start">Load Sample Token</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[580px]">
+                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl md:col-span-1">
+                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider">Encoded JWT Token</div>
+                        <textarea x-model="jwtInput" @input="decodeJwt()" placeholder="Paste eyJhbGciOi..." class="w-full flex-grow bg-transparent p-4 font-mono text-xs text-slate-200 focus:outline-none resize-none break-all"></textarea>
+                        <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs">
+                            <span x-text="jwtStatus" :class="jwtValid ? 'text-emerald-400' : 'text-rose-400'"></span>
+                            <button @click="jwtInput = ''; decodeJwt();" class="text-slate-500 hover:text-slate-300">Clear</button>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col md:col-span-2 space-y-4">
+                        <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl h-[190px]">
+                            <div class="bg-slate-800/60 px-4 py-2 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider">Decoded Header</div>
+                            <pre class="w-full flex-grow bg-transparent p-3 font-mono text-xs text-amber-300 overflow-auto select-all"><code x-text="jwtHeader"></code></pre>
+                        </div>
+                        <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl flex-grow">
+                            <div class="bg-slate-800/60 px-4 py-2 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider flex justify-between">
+                                <span>Decoded Payload</span>
+                                <span x-text="jwtExpiryText" :class="jwtExpired ? 'text-rose-400' : 'text-emerald-400'" class="text-[11px] font-normal"></span>
+                            </div>
+                            <pre class="w-full flex-grow bg-transparent p-3 font-mono text-xs text-indigo-200 overflow-auto select-all"><code x-text="jwtPayload"></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tool 4: Base64 & URL Transformer -->
+            <div x-show="activeTool === 'base64'" class="flex flex-col space-y-6" style="display: none;">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-extrabold tracking-tight text-white">Base64 & URL Transformer</h1>
+                        <p class="text-sm text-slate-400 mt-0.5">Encode and decode text, query parameters, or configurations instantly.</p>
+                    </div>
+                    <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl self-start">
+                        <button @click="base64Mode = 'encode'; transformBase64();" :class="base64Mode === 'encode' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Encode</button>
+                        <button @click="base64Mode = 'decode'; transformBase64();" :class="base64Mode === 'decode' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Decode</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
+                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
+                            <span class="font-semibold text-slate-300 uppercase tracking-wider" x-text="base64Mode === 'encode' ? 'Plain Text Input' : 'Base64 Input'"></span>
+                            <button @click="base64Input = ''; transformBase64();" class="text-slate-400 hover:text-slate-200">Clear</button>
+                        </div>
+                        <textarea x-model="base64Input" @input="transformBase64()" placeholder="Type content here..." class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
+                    </div>
+
+                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
+                            <span class="font-semibold text-slate-300 uppercase tracking-wider" x-text="base64Mode === 'encode' ? 'Base64 Output' : 'Plain Text Output'"></span>
+                            <button @click="navigator.clipboard.writeText(base64Output)" class="text-indigo-400 font-medium hover:underline">Copy Result</button>
+                        </div>
+                        <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-indigo-200 overflow-auto select-all"><code x-text="base64Output"></code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tool 5: SQL Formatter & Minifier -->
+            <div x-show="activeTool === 'sql'" class="flex flex-col space-y-6" style="display: none;">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-extrabold tracking-tight text-white">SQL Query Formatter</h1>
+                        <p class="text-sm text-slate-400 mt-0.5">Clean up messy SQL queries with uppercase keywords and standardized indentation.</p>
+                    </div>
+                    <button @click="loadSqlSample()" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-indigo-400 text-xs px-3 py-1.5 rounded-lg font-medium transition self-start">Load Sample SQL</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
+                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider flex justify-between">
+                            <span>Raw SQL Input</span>
+                            <button @click="sqlInput = ''; formatSql();" class="text-slate-400 hover:text-slate-200">Clear</button>
+                        </div>
+                        <textarea x-model="sqlInput" @input="formatSql()" placeholder="SELECT * FROM users WHERE..." class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
+                    </div>
+
+                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
+                            <span class="font-semibold text-slate-300 uppercase tracking-wider">Formatted SQL Output</span>
+                            <button @click="navigator.clipboard.writeText(sqlOutput)" class="text-indigo-400 font-medium hover:underline">Copy SQL</button>
+                        </div>
+                        <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-emerald-300 overflow-auto select-all"><code x-text="sqlOutput"></code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tool 6: Cron Expression Explainer -->
+            <div x-show="activeTool === 'cron'" class="flex flex-col space-y-6" style="display: none;">
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tight text-white">Cron Expression Explainer</h1>
+                    <p class="text-sm text-slate-400 mt-0.5">Understand complex cron schedules with plain-English breakdowns.</p>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-2xl flex flex-col space-y-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Cron Schedule String</label>
+                        <div class="flex gap-3">
+                            <input type="text" x-model="cronInput" @input="explainCron()" placeholder="e.g. 0 12 * * ?" class="flex-grow bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 font-mono text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <button @click="cronInput = '0 0 * * *'; explainCron();" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 rounded-xl font-medium transition">Daily</button>
+                            <button @click="cronInput = '*/15 * * * *'; explainCron();" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 rounded-xl font-medium transition">Every 15 Min</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-6 flex flex-col space-y-2">
+                        <span class="text-xs text-indigo-400 font-semibold uppercase tracking-wider">Plain English Translation</span>
+                        <p class="text-lg font-medium text-slate-100" x-text="cronExplanation"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuration & History Toolbar (Synthesizer specific) -->
+            <div x-show="activeTool === 'synth'" class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col space-y-3">
                 <div class="flex flex-wrap items-center justify-between gap-4">
                     <div class="flex items-center space-x-6 text-sm">
                         <label class="flex items-center space-x-2 cursor-pointer">
@@ -167,10 +290,9 @@
                     </div>
                 </div>
 
-                <!-- Reliable History Dropdown Select Bar -->
                 <div class="border-t border-slate-800 pt-3 flex items-center gap-3">
                     <span class="text-[11px] text-slate-500 uppercase tracking-wider whitespace-nowrap">Load Recent:</span>
-                    <select @change="loadHistory($event.target.value);$event.target.value='';" class="bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 w-full">
+                    <select @change="loadHistory($event.target.value); $event.target.value='';" class="bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 w-full">
                         <option value="">-- Select past conversion --</option>
                         <template x-for="(item, index) in history" :key="index">
                             <option :value="item.fullJson" x-text="item.date + ' — ' + item.snippet"></option>
@@ -216,6 +338,24 @@
                 mockRows: 5,
                 mockOutput: '// Click generate mock data...',
 
+                jwtInput: '',
+                jwtHeader: '// Paste token to decode header...',
+                jwtPayload: '// Paste token to decode payload...',
+                jwtStatus: 'Awaiting token',
+                jwtValid: true,
+                jwtExpiryText: '',
+                jwtExpired: false,
+
+                base64Mode: 'encode',
+                base64Input: '',
+                base64Output: '// Transformed result will appear here...',
+
+                sqlInput: '',
+                sqlOutput: '// Formatted SQL will appear here...',
+
+                cronInput: '0 12 * * *',
+                cronExplanation: 'At 12:00 PM every day.',
+
                 get outputHeaderTitle() {
                     if (this.lang === 'ts') return 'TypeScript Interfaces';
                     if (this.lang === 'zod') return 'Zod Schema';
@@ -235,6 +375,104 @@
                     };
                     this.inputJson = JSON.stringify(sample, null, 2);
                     this.generate();
+                },
+
+                loadJwtSample() {
+                    this.jwtInput = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZXZlbG9wZXJfc2hhc2hpIiwibmFtZSI6IlNoYXNoaSIsImFkbWluIjp0cnVlLCJpYXQiOjE3MDQwNjgwMDAsImV4cCI6MTk5OTk5OTk5OX0.sig_sample';
+                    this.decodeJwt();
+                },
+
+                loadSqlSample() {
+                    this.sqlInput = 'select id, username, email from users where active = 1 order by created_at desc limit 10;';
+                    this.formatSql();
+                },
+
+                decodeJwt() {
+                    if (!this.jwtInput.trim()) {
+                        this.jwtHeader = '// Paste token to decode header...';
+                        this.jwtPayload = '// Paste token to decode payload...';
+                        this.jwtStatus = 'Awaiting token';
+                        this.jwtValid = true;
+                        this.jwtExpiryText = '';
+                        return;
+                    }
+                    try {
+                        const parts = this.jwtInput.trim().split('.');
+                        if (parts.length < 2) throw new Error('Invalid JWT structure');
+                        const parseBase64Url = (str) => {
+                            let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+                            while (base64.length % 4) { base64 += '='; }
+                            return decodeURIComponent(escape(atob(base64)));
+                        };
+                        const headerObj = JSON.parse(parseBase64Url(parts[0]));
+                        const payloadObj = JSON.parse(parseBase64Url(parts[1]));
+                        this.jwtHeader = JSON.stringify(headerObj, null, 2);
+                        this.jwtPayload = JSON.stringify(payloadObj, null, 2);
+                        this.jwtValid = true;
+                        this.jwtStatus = '✓ Valid JWT Structure';
+                        if (payloadObj.exp) {
+                            const expDate = new Date(payloadObj.exp * 1000);
+                            this.jwtExpired = new Date() > expDate;
+                            this.jwtExpiryText = this.jwtExpired ? `Expired at ${expDate.toLocaleDateString()}` : `Expires: ${expDate.toLocaleDateString()}`;
+                        } else {
+                            this.jwtExpiryText = 'No expiration (exp)';
+                        }
+                    } catch (e) {
+                        this.jwtValid = false;
+                        this.jwtStatus = 'Error: Invalid Token Format';
+                        this.jwtHeader = '// Failed to decode header';
+                        this.jwtPayload = '// Failed to decode payload';
+                        this.jwtExpiryText = '';
+                    }
+                },
+
+                transformBase64() {
+                    if (!this.base64Input.trim()) {
+                        this.base64Output = '// Transformed result will appear here...';
+                        return;
+                    }
+                    try {
+                        if (this.base64Mode === 'encode') {
+                            this.base64Output = btoa(unescape(encodeURIComponent(this.base64Input)));
+                        } else {
+                            this.base64Output = decodeURIComponent(escape(atob(this.base64Input)));
+                        }
+                    } catch (e) {
+                        this.base64Output = '// Error: Invalid input format';
+                    }
+                },
+
+                formatSql() {
+                    if (!this.sqlInput.trim()) {
+                        this.sqlOutput = '// Formatted SQL will appear here...';
+                        return;
+                    }
+                    const keywords = ['SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'ORDER BY', 'GROUP BY', 'LIMIT', 'JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'INSERT INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE FROM'];
+                    let formatted = this.sqlInput.trim();
+                    keywords.forEach(kw => {
+                        const regex = new RegExp(`\\b${kw}\\b`, 'gi');
+                        formatted = formatted.replace(regex, `\n${kw}`);
+                    });
+                    this.sqlOutput = formatted.replace(/^\n/, '').replace(/\s+/g, ' ');
+                    // Clean up newlines for readability
+                    keywords.forEach(kw => {
+                        const regex = new RegExp(`\\b${kw}\\b`, 'g');
+                        this.sqlOutput = this.sqlOutput.replace(new RegExp(`(${kw})`, 'g'), '\n$1');
+                    });
+                    this.sqlOutput = this.sqlOutput.trim();
+                },
+
+                explainCron() {
+                    if (!this.cronInput.trim()) {
+                        this.cronExplanation = 'Please enter a valid cron expression.';
+                        return;
+                    }
+                    const parts = this.cronInput.trim().split(/\s+/);
+                    if (parts.length < 5) {
+                        this.cronExplanation = 'Invalid cron expression (needs at least 5 parts: minute hour day month weekday)';
+                        return;
+                    }
+                    this.cronExplanation = `Runs at minute ${parts[0]}, hour ${parts[1]}, on day ${parts[2]} of the month, in month ${parts[3]}, on weekday ${parts[4]}.`;
                 },
 
                 loadHistory(jsonStr) {
@@ -282,7 +520,6 @@
                             this.outputCode = res.trim();
                         }
 
-                        // Save history (prevent duplicates)
                         if (!this.history.some(h => h.fullJson === this.inputJson)) {
                             this.history.unshift({ 
                                 date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), 
@@ -325,7 +562,7 @@
                                     lines.push(`  ${safeKey}${opt}: ${childName}[];`);
                                 } else {
                                     const stype = sub.length > 0 ? typeof sub[0] : 'any';
-                                    lines.push(`  ${safeKey}${opt}: ${stype}[];`;
+                                    lines.push(`  ${safeKey}${opt}: ${stype}[];`);
                                 }
                             } else if (typeof sub === 'object') {
                                 const childName = this.capitalize(key);
