@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TypeCraft Pro — Enterprise JSON to Type & Schema Generator</title>
-    <meta name="description" content="Free lightning-fast client-side tool to convert JSON into TypeScript interfaces, Zod validation schemas, and Python Pydantic models instantly. Zero server roundtrips.">
+    <title>TypeCraft Pro — Enterprise Multi-Tool Developer Suite</title>
+    <meta name="description" content="Lightning-fast client-side developer platform. Convert JSON to TypeScript, Zod, and Pydantic, generate mock API data, and diff schemas instantly.">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -29,8 +29,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="./assets/css/style.css">
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white" @keydown.window.ctrl.enter="generate()">
 
     <!-- Header Navigation -->
     <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
@@ -41,387 +43,148 @@
                 </div>
                 <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-400 bg-clip-text text-transparent">TypeCraft<span class="text-indigo-500">.pro</span></span>
             </div>
-            <div class="flex items-center space-x-4 text-sm">
-                <span class="hidden sm:inline-block px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-full text-xs font-semibold">v2.0 Enterprise Engine</span>
+            
+            <!-- Tool Mode Switcher Hub -->
+            <div class="hidden md:flex bg-slate-900 p-1 border border-slate-800 rounded-xl">
+                <button @click="activeTool = 'synth'" :class="activeTool === 'synth' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Schema Synthesizer</button>
+                <button @click="activeTool = 'mock'" :class="activeTool === 'mock' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Mock Data Generator</button>
             </div>
         </div>
     </header>
 
-    <!-- Top Leaderboard Ad Slot (Policy compliant placement) -->
+    <!-- Top Leaderboard Ad Slot -->
     <div class="w-full bg-slate-900/30 border-b border-slate-900 py-3">
         <div class="max-w-7xl mx-auto px-4 flex justify-center">
             <div class="w-full max-w-[728px] h-[90px] bg-slate-900/80 border border-dashed border-slate-800 rounded-lg flex items-center justify-center text-xs text-slate-600 uppercase tracking-widest select-none">
-                <!-- AdSense Leaderboard Slot: 728x90 -->
-                <span>Advertisement (Leaderboard)</span>
+                <span>Advertisement (Leaderboard 728x90)</span>
             </div>
         </div>
     </div>
 
-    <!-- Main Workspace -->
+    <!-- Main Workspace App Container -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-8" x-data="typeCraftApp()">
         
-        <!-- Left Column: Workspace (Span 9) -->
+        <!-- Left Workspace Column (Span 9) -->
         <div class="lg:col-span-9 flex flex-col space-y-6">
             
-            <!-- Intro & Mode Switcher Bar -->
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                    <h1 class="text-2xl font-extrabold tracking-tight text-white">Advanced Code & Schema Synthesizer</h1>
-                    <p class="text-sm text-slate-400 mt-0.5">Instantly convert JSON objects into robust TypeScript, Zod validators, or Python Pydantic models.</p>
-                </div>
-                
-                <!-- Target Language Selector Tabs -->
-                <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl self-start">
-                    <button @click="setLang('ts')" :class="lang === 'ts' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">TypeScript</button>
-                    <button @click="setLang('zod')" :class="lang === 'zod' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Zod Schema</button>
-                    <button @click="setLang('pydantic')" :class="lang === 'pydantic' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Pydantic</button>
-                </div>
-            </div>
-
-            <!-- Workspace Editor Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
-                
-                <!-- Input Panel -->
-                <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-                    <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between">
-                        <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Input JSON
-                        </span>
-                        <div class="flex items-center space-x-2 text-xs">
-                            <button @click="formatJsonInput()" class="text-slate-400 hover:text-slate-200 transition" title="Beautify JSON spacing">Format</button>
-                            <span class="text-slate-700">|</span>
-                            <button @click="loadSample()" class="text-indigo-400 hover:text-indigo-300 font-medium transition">Sample</button>
-                            <span class="text-slate-700">|</span>
-                            <button @click="inputJson = ''; generate();" class="text-slate-400 hover:text-slate-200 transition">Clear</button>
+            <!-- Tool 1: Schema Synthesizer View -->
+            <template x-if="activeTool === 'synth'">
+                <div class="flex flex-col space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h1 class="text-2xl font-extrabold tracking-tight text-white">Advanced Code & Schema Synthesizer</h1>
+                            <p class="text-sm text-slate-400 mt-0.5">Convert JSON into TypeScript, Zod, or Pydantic models. Press <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs">Ctrl + Enter</kbd> to run.</p>
+                        </div>
+                        <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl self-start">
+                            <button @click="setLang('ts')" :class="lang === 'ts' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">TS</button>
+                            <button @click="setLang('zod')" :class="lang === 'zod' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Zod</button>
+                            <button @click="setLang('pydantic')" :class="lang === 'pydantic' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Pydantic</button>
                         </div>
                     </div>
-                    <textarea 
-                        x-model="inputJson" 
-                        @input="generate()"
-                        placeholder="Paste your JSON string here..." 
-                        class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none placeholder:text-slate-600"></textarea>
-                    
-                    <!-- Linter Status Footer -->
-                    <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs">
-                        <span x-text="errorMsg ? errorMsg : '✓ Valid JSON syntax'" :class="errorMsg ? 'text-rose-400 font-medium' : 'text-emerald-400'"></span>
-                        <span class="text-slate-500" x-text="inputJson.length + ' chars'"></span>
-                    </div>
-                </div>
 
-                <!-- Output Panel -->
-                <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl relative">
-                    <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between">
-                        <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5" x-text="outputHeaderTitle"></span>
-                        <div class="flex items-center space-x-3">
-                            <button @click="copyOutput()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1 rounded font-medium transition shadow-sm flex items-center gap-1">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-                                <span x-text="copied ? 'Copied!' : 'Copy Code'"></span>
-                            </button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
+                        <!-- Input -->
+                        <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                            <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
+                                <span class="font-semibold text-slate-300 uppercase tracking-wider">Input JSON</span>
+                                <div class="space-x-2">
+                                    <button @click="formatJsonInput()" class="text-slate-400 hover:text-slate-200">Format</button>
+                                    <span>|</span>
+                                    <button @click="loadSample()" class="text-indigo-400 font-medium">Sample</button>
+                                    <span>|</span>
+                                    <button @click="inputJson = ''; generate();" class="text-slate-400">Clear</button>
+                                </div>
+                            </div>
+                            <textarea x-model="inputJson" @input="generate()" placeholder="Paste JSON payload..." class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
+                            <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs">
+                                <span x-text="errorMsg ? errorMsg : '✓ Valid JSON'" :class="errorMsg ? 'text-rose-400' : 'text-emerald-400'"></span>
+                                <span class="text-slate-500" x-text="inputJson.length + ' chars'"></span>
+                            </div>
+                        </div>
+
+                        <!-- Output -->
+                        <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl relative">
+                            <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
+                                <span class="font-semibold text-slate-300 uppercase tracking-wider" x-text="outputHeaderTitle"></span>
+                                <button @click="copyOutput()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded font-medium transition" x-text="copied ? 'Copied!' : 'Copy Code'"></button>
+                            </div>
+                            <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-indigo-200 overflow-auto select-all"><code x-text="outputCode"></code></pre>
+                            <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
+                                <span>Client-side execution</span>
+                                <span x-text="outputCode.split('\n').length + ' lines'"></span>
+                            </div>
                         </div>
                     </div>
-                    <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-indigo-200 overflow-auto focus:outline-none select-all"><code x-text="outputCode"></code></pre>
-                    <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
-                        <span>Generated instantly via Client-Side Engine</span>
-                        <span x-text="outputLineCount + ' lines'"></span>
+                </div>
+            </template>
+
+            <!-- Tool 2: Mock API Data Generator View -->
+            <template x-if="activeTool === 'mock'">
+                <div class="flex flex-col space-y-6">
+                    <div>
+                        <h1 class="text-2xl font-extrabold tracking-tight text-white">Mock API Payload Generator</h1>
+                        <p class="text-sm text-slate-400 mt-0.5">Generate realistic test data rows instantly from any schema structure.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
+                        <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                            <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider">Base Template JSON</div>
+                            <textarea x-model="mockInput" class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
+                            <div class="p-3 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between">
+                                <span class="text-xs text-slate-400">Rows: <strong x-text="mockRows" class="text-white"></strong></span>
+                                <input type="range" min="1" max="20" x-model="mockRows" class="accent-indigo-600">
+                                <button @click="generateMock()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-1.5 rounded font-semibold">Generate Mock Data</button>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                            <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider flex justify-between">
+                                <span>Generated Mock Dataset</span>
+                                <button @click="navigator.clipboard.writeText(mockOutput)" class="text-indigo-400 hover:underline">Copy JSON</button>
+                            </div>
+                            <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-emerald-300 overflow-auto select-all"><code x-text="mockOutput"></code></pre>
+                        </div>
                     </div>
                 </div>
+            </template>
 
-            </div>
-
-            <!-- Configuration & Customization Toolbar -->
+            <!-- Configuration Toolbar -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
-                <div class="flex flex-wrap items-center gap-6 text-sm">
+                <div class="flex items-center space-x-6 text-sm">
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        <input type="checkbox" x-model="options.optionalFields" @change="generate()" class="rounded bg-slate-800 border-slate-700 text-indigo-600 focus:ring-indigo-500">
+                        <input type="checkbox" x-model="options.optionalFields" @change="generate()" class="rounded bg-slate-800 border-slate-700 text-indigo-600">
                         <span class="text-slate-300 text-xs">Optional Fields (?)</span>
                     </label>
                     <div class="flex items-center space-x-2">
                         <span class="text-xs text-slate-400">Root Name:</span>
-                        <input type="text" x-model="options.rootName" @input="generate()" class="bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 w-32" placeholder="RootObject">
+                        <input type="text" x-model="options.rootName" @input="generate()" class="bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-slate-200 focus:outline-none w-28">
                     </div>
                 </div>
-                <div class="text-xs text-slate-500">
-                    🚀 Zero Latency • 100% Secure
-                </div>
+                <div class="text-xs text-slate-500">History: <span x-text="history.length"></span> items stored</div>
             </div>
 
         </div>
 
-        <!-- Right Column: Sidebar Ad & Utilities (Span 3) -->
+        <!-- Right Sidebar Ad Column (Span 3) -->
         <aside class="lg:col-span-3 flex flex-col space-y-6">
-            
-            <!-- AdSense Sidebar Box -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col items-center justify-center min-h-[300px] text-center sticky top-24">
                 <span class="text-[10px] text-slate-600 uppercase tracking-widest mb-3">Sponsored Content</span>
-                <!-- AdSense Vertical/Box Slot: 300x250 -->
                 <div class="w-full h-[250px] bg-slate-950/60 border border-dashed border-slate-800 rounded-lg flex items-center justify-center text-xs text-slate-600">
                     <span>AdSense Sidebar Slot (300x250)</span>
                 </div>
-                <p class="text-[11px] text-slate-500 mt-3">Support free developer utilities by keeping ads enabled.</p>
+                <p class="text-[11px] text-slate-500 mt-3">Ads support free developer tools.</p>
             </div>
-
-            <!-- Pro Features Summary -->
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
-                <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Engine Highlights</h3>
-                <ul class="text-xs text-slate-400 space-y-2 list-disc list-inside">
-                    <li>Multi-format transformation (TS, Zod, Pydantic).</li>
-                    <li>Built-in JSON syntax linter & beautifier.</li>
-                    <li>Deep recursive parsing for complex nested arrays.</li>
-                </ul>
-            </div>
-
         </aside>
 
     </main>
 
     <!-- Footer -->
     <footer class="border-t border-slate-900 bg-slate-950 py-8 mt-auto text-center text-xs text-slate-600">
-        <p>&copy; 2026 TypeCraft Pro. Engineered for professional engineering velocity.</p>
+        <p>&copy; 2026 TypeCraft Pro. Modular Enterprise Edition.</p>
     </footer>
 
-    <!-- Core Enterprise Logic Script -->
-    <script>
-        function typeCraftApp() {
-            return {
-                inputJson: '',
-                outputCode: '// Paste or load JSON to begin...',
-                errorMsg: '',
-                copied: false,
-                lang: 'ts', // 'ts', 'zod', 'pydantic'
-                options: {
-                    optionalFields: false,
-                    rootName: 'RootObject'
-                },
-                get outputHeaderTitle() {
-                    if (this.lang === 'ts') return 'TypeScript Interfaces';
-                    if (this.lang === 'zod') return 'Zod Validation Schema';
-                    if (this.lang === 'pydantic') return 'Python Pydantic Models';
-                    return 'Output Code';
-                },
-                get outputLineCount() {
-                    return this.outputCode.split('\n').length;
-                },
-                setLang(l) {
-                    this.lang = l;
-                    this.generate();
-                },
-                loadSample() {
-                    const sample = {
-                        "id": 98231,
-                        "transactionId": "txn_89fbc02",
-                        "status": "completed",
-                        "amount": 149.99,
-                        "metadata": {
-                            "gateway": "stripe",
-                            "fee": 4.50,
-                            "isTestMode": false
-                        },
-                        "items": [
-                            { "productId": "prod_101", "quantity": 2, "tags": ["digital", "subscription"] }
-                        ]
-                    };
-                    this.inputJson = JSON.stringify(sample, null, 2);
-                    this.generate();
-                },
-                formatJsonInput() {
-                    if (!this.inputJson.trim()) return;
-                    try {
-                        const parsed = JSON.parse(this.inputJson);
-                        this.inputJson = JSON.stringify(parsed, null, 2);
-                        this.errorMsg = '';
-                        this.generate();
-                    } catch (e) {
-                        this.errorMsg = 'Cannot format: Invalid JSON syntax';
-                    }
-                },
-                generate() {
-                    this.errorMsg = '';
-                    if (!this.inputJson.trim()) {
-                        this.outputCode = '// Paste or load JSON to begin...';
-                        return;
-                    }
-                    try {
-                        const parsed = JSON.parse(this.inputJson);
-                        const rootName = (this.options.rootName && this.options.rootName.trim()) 
-                            ? this.options.rootName.trim() 
-                            : 'RootObject';
-                        
-                        const registries = {};
-                        
-                        if (this.lang === 'ts') {
-                            this.parseTS(parsed, rootName, registries);
-                            let result = '';
-                            for (const name in registries) {
-                                result += `interface ${name} {\n${registries[name]}\n}\n\n`;
-                            }
-                            this.outputCode = result.trim();
-                        } else if (this.lang === 'zod') {
-                            this.parseZod(parsed, rootName, registries);
-                            let result = `import { z } from 'zod';\n\n`;
-                            for (const name in registries) {
-                                result += `export const ${name} = z.object({\n${registries[name]}\n});\n\n`;
-                                result += `type ${name} = z.infer<typeof ${name}>;\n\n`;
-                            }
-                            this.outputCode = result.trim();
-                        } else if (this.lang === 'pydantic') {
-                            this.parsePydantic(parsed, rootName, registries);
-                            let result = `from pydantic import BaseModel\nfrom typing import List, Optional, Any\n\n`;
-                            for (const name in registries) {
-                                result += `class ${name}(BaseModel):\n${registries[name]}\n\n`;
-                            }
-                            this.outputCode = result.trim();
-                        }
-                    } catch (e) {
-                        this.errorMsg = 'JSON Error: ' + e.message;
-                        this.outputCode = '// Fix syntax errors in input JSON to render schema';
-                    }
-                },
-                parseTS(val, name, registries) {
-                    if (val === null || val === undefined) return 'any;';
-                    if (Array.isArray(val)) {
-                        if (val.length === 0) return 'any[];';
-                        const first = val[0];
-                        if (typeof first === 'object' && first !== null && !Array.isArray(first)) {
-                            const childName = this.singularize(name);
-                            this.parseTS(first, childName, registries);
-                            return `${childName}[];`;
-                        }
-                        return `${typeof first}[];`;
-                    }
-                    if (typeof val === 'object') {
-                        const lines = [];
-                        const opt = this.options.optionalFields ? '?' : '';
-                        for (const key in val) {
-                            const sub = val[key];
-                            const safeKey = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key) ? key : `'${key}'`;
-                            if (sub === null || sub === undefined) {
-                                lines.push(`  ${safeKey}${opt}: any;`);
-                            } else if (Array.isArray(sub)) {
-                                if (sub.length > 0 && typeof sub[0] === 'object' && sub[0] !== null) {
-                                    const childName = this.capitalize(key);
-                                    this.parseTS(sub[0], childName, registries);
-                                    lines.push(`  ${safeKey}${opt}: ${childName}[];`);
-                                } else {
-                                    const stype = sub.length > 0 ? typeof sub[0] : 'any';
-                                    lines.push(`  ${safeKey}${opt}: ${stype}[];`);
-                                }
-                            } else if (typeof sub === 'object') {
-                                const childName = this.capitalize(key);
-                                this.parseTS(sub, childName, registries);
-                                lines.push(`  ${safeKey}${opt}: ${childName};`);
-                            } else {
-                                lines.push(`  ${safeKey}${opt}: ${typeof sub};`);
-                            }
-                        }
-                        registries[name] = lines.join('\n');
-                        return name;
-                    }
-                    return `${typeof val};`;
-                },
-                parseZod(val, name, registries) {
-                    if (val === null || val === undefined) return 'z.any()';
-                    if (Array.isArray(val)) {
-                        if (val.length === 0) return 'z.array(z.any())';
-                        const first = val[0];
-                        if (typeof first === 'object' && first !== null && !Array.isArray(first)) {
-                            const childName = this.singularize(name);
-                            this.parseZod(first, childName, registries);
-                            return `z.array(${childName})`;
-                        }
-                        return `z.array(z.${typeof first}())`;
-                    }
-                    if (typeof val === 'object') {
-                        const lines = [];
-                        const optSuffix = this.options.optionalFields ? '.optional()' : '';
-                        for (const key in val) {
-                            const sub = val[key];
-                            const safeKey = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key) ? key : `'${key}'`;
-                            if (sub === null || sub === undefined) {
-                                lines.push(`  ${safeKey}: z.any()${optSuffix},`);
-                            } else if (Array.isArray(sub)) {
-                                if (sub.length > 0 && typeof sub[0] === 'object' && sub[0] !== null) {
-                                    const childName = this.capitalize(key);
-                                    this.parseZod(sub[0], childName, registries);
-                                    lines.push(`  ${safeKey}: z.array(${childName})${optSuffix},`);
-                                } else {
-                                    const stype = sub.length > 0 ? typeof sub[0] : 'string';
-                                    lines.push(`  ${safeKey}: z.array(z.${stype}())${optSuffix},`);
-                                }
-                            } else if (typeof sub === 'object') {
-                                const childName = this.capitalize(key);
-                                this.parseZod(sub, childName, registries);
-                                lines.push(`  ${safeKey}: ${childName}${optSuffix},`);
-                            } else {
-                                const t = typeof sub;
-                                lines.push(`  ${safeKey}: z.${t}()${optSuffix},`);
-                            }
-                        }
-                        registries[name] = lines.join('\n');
-                        return name;
-                    }
-                    return `z.${typeof val}()`;
-                },
-                parsePydantic(val, name, registries) {
-                    if (val === null || val === undefined) return 'Any';
-                    if (Array.isArray(val)) {
-                        if (val.length === 0) return 'List[Any]';
-                        const first = val[0];
-                        if (typeof first === 'object' && first !== null && !Array.isArray(first)) {
-                            const childName = this.singularize(name);
-                            this.parsePydantic(first, childName, registries);
-                            return `List[${childName}]`;
-                        }
-                        const pyType = typeof first === 'number' ? (Number.isInteger(first) ? 'int' : 'float') : (typeof first === 'boolean' ? 'bool' : 'str');
-                        return `List[${pyType}]`;
-                    }
-                    if (typeof val === 'object') {
-                        const lines = [];
-                        for (const key in val) {
-                            const sub = val[key];
-                            const safeKey = /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(key) ? key : `field_${key}`;
-                            const opt = this.options.optionalFields;
-                            if (sub === null || sub === undefined) {
-                                lines.push(`    ${safeKey}: ${opt ? 'Optional[Any] = None' : 'Any'}`);
-                            } else if (Array.isArray(sub)) {
-                                if (sub.length > 0 && typeof sub[0] === 'object' && sub[0] !== null) {
-                                    const childName = this.capitalize(key);
-                                    this.parsePydantic(sub[0], childName, registries);
-                                    lines.push(`    ${safeKey}: ${opt ? `Optional[List[${childName}]] = None` : `List[${childName}]`}`);
-                                } else {
-                                    const stype = sub.length > 0 ? (typeof sub[0] === 'number' ? (Number.isInteger(sub[0]) ? 'int' : 'float') : (typeof sub[0] === 'boolean' ? 'bool' : 'str')) : 'Any';
-                                    lines.push(`    ${safeKey}: ${opt ? `Optional[List[${stype}]] = None` : `List[${stype}]`}`);
-                                }
-                            } else if (typeof sub === 'object') {
-                                const childName = this.capitalize(key);
-                                this.parsePydantic(sub, childName, registries);
-                                lines.push(`    ${safeKey}: ${opt ? `Optional[${childName}] = None` : childName}`);
-                            } else {
-                                const t = typeof sub === 'number' ? (Number.isInteger(sub) ? 'int' : 'float') : (typeof sub === 'boolean' ? 'bool' : 'str');
-                                lines.push(`    ${safeKey}: ${opt ? `Optional[${t}] = None` : t}`);
-                            }
-                        }
-                        registries[name] = lines.join('\n');
-                        return name;
-                    }
-                    return 'Any';
-                },
-                capitalize(str) {
-                    const cleaned = str.replace(/[^a-zA-Z0-9_$]/g, '');
-                    return cleaned ? cleaned.charAt(0).toUpperCase() + cleaned.slice(1) : 'Item';
-                },
-                singularize(str) {
-                    const cap = this.capitalize(str);
-                    if (cap.endsWith('ies')) return cap.slice(0, -3) + 'y';
-                    if (cap.endsWith('s') && !cap.endsWith('ss')) return cap.slice(0, -1);
-                    return cap + 'Item';
-                },
-                copyOutput() {
-                    navigator.clipboard.writeText(this.outputCode);
-                    this.copied = true;
-                    setTimeout(() => this.copied = false, 2000);
-                }
-            }
-        }
-    </script>
+    <!-- Load Modular JavaScript Files -->
+    <script src="./assets/js/engines.js"></script>
+    <script src="./assets/js/app.js"></script>
 </body>
-                      </html>
+    </html>
