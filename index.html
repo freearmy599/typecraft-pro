@@ -49,17 +49,27 @@
                 <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-400 bg-clip-text text-transparent">TypeCraft<span class="text-indigo-500">.pro</span></span>
             </div>
             
-            <!-- Tool Mode Switcher Hub -->
-            <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl space-x-1 overflow-x-auto max-w-full">
-                <button @click="activeTool = 'synth'" :class="activeTool === 'synth' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">Synthesizer</button>
-                <button @click="activeTool = 'mock'" :class="activeTool === 'mock' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">Mock Data</button>
-                <button @click="activeTool = 'jwt'" :class="activeTool === 'jwt' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">JWT Decoder</button>
-                <button @click="activeTool = 'base64'" :class="activeTool === 'base64' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">Base64</button>
-                <button @click="activeTool = 'sql'" :class="activeTool === 'sql' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">SQL Formatter</button>
-                <button @click="activeTool = 'cron'" :class="activeTool === 'cron' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap">Cron Explainer</button>
+            <!-- Desktop Tool Mode Switcher -->
+            <div class="hidden md:flex bg-slate-900 p-1 border border-slate-800 rounded-xl space-x-1">
+                <button @click="activeTool = 'synth'" :class="activeTool === 'synth' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Synthesizer</button>
+                <button @click="activeTool = 'mock'" :class="activeTool === 'mock' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Mock Data</button>
+                <button @click="activeTool = 'jwt'" :class="activeTool === 'jwt' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">JWT Decoder</button>
+                <button @click="activeTool = 'base64'" :class="activeTool === 'base64' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Base64</button>
+                <button @click="activeTool = 'sql'" :class="activeTool === 'sql' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">SQL</button>
+                <button @click="activeTool = 'cron'" :class="activeTool === 'cron' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Cron</button>
             </div>
         </div>
     </header>
+
+    <!-- Mobile Tool Switcher Bar (Scrollable for smaller screens) -->
+    <div class="md:hidden bg-slate-900/80 border-b border-slate-800 px-4 py-2 flex space-x-2 overflow-x-auto">
+        <button @click="activeTool = 'synth'" :class="activeTool === 'synth' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">Synthesizer</button>
+        <button @click="activeTool = 'mock'" :class="activeTool === 'mock' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">Mock Data</button>
+        <button @click="activeTool = 'jwt'" :class="activeTool === 'jwt' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">JWT Decoder</button>
+        <button @click="activeTool = 'base64'" :class="activeTool === 'base64' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">Base64</button>
+        <button @click="activeTool = 'sql'" :class="activeTool === 'sql' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">SQL Formatter</button>
+        <button @click="activeTool = 'cron'" :class="activeTool === 'cron' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">Cron Explainer</button>
+    </div>
 
     <!-- Top Leaderboard Ad Slot -->
     <div class="w-full bg-slate-900/30 border-b border-slate-900 py-3">
@@ -454,9 +464,7 @@
                         formatted = formatted.replace(regex, `\n${kw}`);
                     });
                     this.sqlOutput = formatted.replace(/^\n/, '').replace(/\s+/g, ' ');
-                    // Clean up newlines for readability
                     keywords.forEach(kw => {
-                        const regex = new RegExp(`\\b${kw}\\b`, 'g');
                         this.sqlOutput = this.sqlOutput.replace(new RegExp(`(${kw})`, 'g'), '\n$1');
                     });
                     this.sqlOutput = this.sqlOutput.trim();
@@ -469,7 +477,7 @@
                     }
                     const parts = this.cronInput.trim().split(/\s+/);
                     if (parts.length < 5) {
-                        this.cronExplanation = 'Invalid cron expression (needs at least 5 parts: minute hour day month weekday)';
+                        this.cronExplanation = 'Invalid cron expression (needs at least 5 parts)';
                         return;
                     }
                     this.cronExplanation = `Runs at minute ${parts[0]}, hour ${parts[1]}, on day ${parts[2]} of the month, in month ${parts[3]}, on weekday ${parts[4]}.`;
