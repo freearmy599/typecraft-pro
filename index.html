@@ -37,7 +37,7 @@
         pre::-webkit-scrollbar-thumb:hover, textarea::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.7); }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white" @keydown.window.ctrl.enter="generate()">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white" x-data="typeCraftApp()" @keydown.window.ctrl.enter="generate()">
 
     <!-- Header Navigation -->
     <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
@@ -49,15 +49,15 @@
                 <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-400 bg-clip-text text-transparent">TypeCraft<span class="text-indigo-500">.pro</span></span>
             </div>
             
-            <!-- Tool Mode Switcher Hub -->
-            <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl" x-data>
+            <!-- Tool Mode Switcher Hub (Linked to root Alpine state) -->
+            <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl">
                 <button @click="activeTool = 'synth'" :class="activeTool === 'synth' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Synthesizer</button>
                 <button @click="activeTool = 'mock'" :class="activeTool === 'mock' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Mock Data</button>
             </div>
         </div>
     </header>
 
-    <!-- Top Leaderboard Ad Slot (Policy compliant placement) -->
+    <!-- Top Leaderboard Ad Slot -->
     <div class="w-full bg-slate-900/30 border-b border-slate-900 py-3">
         <div class="max-w-7xl mx-auto px-4 flex justify-center">
             <div class="w-full max-w-[728px] h-[90px] bg-slate-900/80 border border-dashed border-slate-800 rounded-lg flex items-center justify-center text-xs text-slate-600 uppercase tracking-widest select-none">
@@ -67,7 +67,7 @@
     </div>
 
     <!-- Main Workspace App Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-8" x-data="typeCraftApp()">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         <!-- Left Workspace Column (Span 9) -->
         <div class="lg:col-span-9 flex flex-col space-y-6">
@@ -176,7 +176,7 @@
                     <div class="border-t border-slate-800 pt-3 flex flex-wrap gap-2 items-center">
                         <span class="text-[11px] text-slate-500 uppercase tracking-wider">Recent:</span>
                         <template x-for="(item, index) in history" :key="index">
-                            <button @click="inputJson = item.fullJson; generate();" 
+                            <button @click="loadHistory(item.fullJson)" 
                                     class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs px-2.5 py-1 rounded-md transition truncate max-w-[180px]"
                                     :title="item.fullJson">
                                 <span x-text="item.date + ' — ' + item.snippet"></span>
@@ -192,7 +192,6 @@
         <aside class="lg:col-span-3 flex flex-col space-y-6">
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col items-center justify-center min-h-[300px] text-center sticky top-24">
                 <span class="text-[10px] text-slate-600 uppercase tracking-widest mb-3">Sponsored Content</span>
-                <!-- AdSense Vertical/Box Slot: 300x250 -->
                 <div class="w-full h-[250px] bg-slate-950/60 border border-dashed border-slate-800 rounded-lg flex items-center justify-center text-xs text-slate-600">
                     <span>AdSense Sidebar Slot (300x250)</span>
                 </div>
@@ -245,6 +244,12 @@
                     this.generate();
                 },
 
+                loadHistory(jsonStr) {
+                    this.inputJson = jsonStr;
+                    this.activeTool = 'synth';
+                    this.generate();
+                },
+
                 formatJsonInput() {
                     if (!this.inputJson.trim()) return;
                     try {
@@ -283,14 +288,16 @@
                             this.outputCode = res.trim();
                         }
 
-                        // Save history with full payload retention
-                        this.history.unshift({ 
-                            date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), 
-                            snippet: this.inputJson.slice(0, 15) + '...',
-                            fullJson: this.inputJson
-                        });
-                        if (this.history.length > 5) this.history.pop();
-                        localStorage.setItem('tc_history', JSON.stringify(this.history));
+                        // Save history with full payload retention (prevent duplicates of the exact same string)
+                        if (!this.history.some(h => h.fullJson === this.inputJson)) {
+                            this.history.unshift({ 
+                                date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), 
+                                snippet: this.inputJson.slice(0, 15) + '...',
+                                fullJson: this.inputJson
+                            });
+                            if (this.history.length > 5) this.history.pop();
+                            localStorage.setItem('tc_history', JSON.stringify(this.history));
+                        }
                     } catch (e) {
                         this.errorMsg = 'JSON Error: ' + e.message;
                         this.outputCode = '// Fix syntax errors to update schema';
@@ -468,4 +475,4 @@
         }
     </script>
 </body>
-    </html>
+</html> 
