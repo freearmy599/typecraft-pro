@@ -49,7 +49,7 @@
                 <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-400 bg-clip-text text-transparent">TypeCraft<span class="text-indigo-500">.pro</span></span>
             </div>
             
-            <!-- Tool Mode Switcher Hub (Linked to root Alpine state) -->
+            <!-- Tool Mode Switcher Hub -->
             <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl">
                 <button @click="activeTool = 'synth'" :class="activeTool === 'synth' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Synthesizer</button>
                 <button @click="activeTool = 'mock'" :class="activeTool === 'mock' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Mock Data</button>
@@ -73,85 +73,81 @@
         <div class="lg:col-span-9 flex flex-col space-y-6">
             
             <!-- Tool 1: Schema Synthesizer View -->
-            <template x-if="activeTool === 'synth'">
-                <div class="flex flex-col space-y-6">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div>
-                            <h1 class="text-2xl font-extrabold tracking-tight text-white">Advanced Code & Schema Synthesizer</h1>
-                            <p class="text-sm text-slate-400 mt-0.5">Convert JSON into TypeScript, Zod, or Pydantic. Press <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs">Ctrl + Enter</kbd> to run.</p>
+            <div x-show="activeTool === 'synth'" class="flex flex-col space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-extrabold tracking-tight text-white">Advanced Code & Schema Synthesizer</h1>
+                        <p class="text-sm text-slate-400 mt-0.5">Convert JSON into TypeScript, Zod, or Pydantic. Press <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs">Ctrl + Enter</kbd> to run.</p>
+                    </div>
+                    <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl self-start">
+                        <button @click="setLang('ts')" :class="lang === 'ts' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">TS</button>
+                        <button @click="setLang('zod')" :class="lang === 'zod' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Zod</button>
+                        <button @click="setLang('pydantic')" :class="lang === 'pydantic' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Pydantic</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
+                    <!-- Input -->
+                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
+                            <span class="font-semibold text-slate-300 uppercase tracking-wider">Input JSON</span>
+                            <div class="space-x-2">
+                                <button @click="formatJsonInput()" class="text-slate-400 hover:text-slate-200">Format</button>
+                                <span>|</span>
+                                <button @click="loadSample()" class="text-indigo-400 font-medium">Sample</button>
+                                <span>|</span>
+                                <button @click="inputJson = ''; generate();" class="text-slate-400">Clear</button>
+                            </div>
                         </div>
-                        <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl self-start">
-                            <button @click="setLang('ts')" :class="lang === 'ts' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">TS</button>
-                            <button @click="setLang('zod')" :class="lang === 'zod' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Zod</button>
-                            <button @click="setLang('pydantic')" :class="lang === 'pydantic' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Pydantic</button>
+                        <textarea x-model="inputJson" @input="generate()" placeholder="Paste JSON payload..." class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
+                        <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs">
+                            <span x-text="errorMsg ? errorMsg : '✓ Valid JSON'" :class="errorMsg ? 'text-rose-400' : 'text-emerald-400'"></span>
+                            <span class="text-slate-500" x-text="inputJson.length + ' chars'"></span>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
-                        <!-- Input -->
-                        <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-                            <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
-                                <span class="font-semibold text-slate-300 uppercase tracking-wider">Input JSON</span>
-                                <div class="space-x-2">
-                                    <button @click="formatJsonInput()" class="text-slate-400 hover:text-slate-200">Format</button>
-                                    <span>|</span>
-                                    <button @click="loadSample()" class="text-indigo-400 font-medium">Sample</button>
-                                    <span>|</span>
-                                    <button @click="inputJson = ''; generate();" class="text-slate-400">Clear</button>
-                                </div>
-                            </div>
-                            <textarea x-model="inputJson" @input="generate()" placeholder="Paste JSON payload..." class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
-                            <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs">
-                                <span x-text="errorMsg ? errorMsg : '✓ Valid JSON'" :class="errorMsg ? 'text-rose-400' : 'text-emerald-400'"></span>
-                                <span class="text-slate-500" x-text="inputJson.length + ' chars'"></span>
-                            </div>
+                    <!-- Output -->
+                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl relative">
+                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
+                            <span class="font-semibold text-slate-300 uppercase tracking-wider" x-text="outputHeaderTitle"></span>
+                            <button @click="copyOutput()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded font-medium transition" x-text="copied ? 'Copied!' : 'Copy Code'"></button>
                         </div>
-
-                        <!-- Output -->
-                        <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl relative">
-                            <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
-                                <span class="font-semibold text-slate-300 uppercase tracking-wider" x-text="outputHeaderTitle"></span>
-                                <button @click="copyOutput()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded font-medium transition" x-text="copied ? 'Copied!' : 'Copy Code'"></button>
-                            </div>
-                            <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-indigo-200 overflow-auto select-all"><code x-text="outputCode"></code></pre>
-                            <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
-                                <span>Client-side execution</span>
-                                <span x-text="outputCode.split('\n').length + ' lines'"></span>
-                            </div>
+                        <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-indigo-200 overflow-auto select-all"><code x-text="outputCode"></code></pre>
+                        <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
+                            <span>Client-side execution</span>
+                            <span x-text="outputCode.split('\n').length + ' lines'"></span>
                         </div>
                     </div>
                 </div>
-            </template>
+            </div>
 
             <!-- Tool 2: Mock API Data Generator View -->
-            <template x-if="activeTool === 'mock'">
-                <div class="flex flex-col space-y-6">
-                    <div>
-                        <h1 class="text-2xl font-extrabold tracking-tight text-white">Mock API Payload Generator</h1>
-                        <p class="text-sm text-slate-400 mt-0.5">Generate realistic test data rows instantly from any schema structure.</p>
+            <div x-show="activeTool === 'mock'" class="flex flex-col space-y-6" style="display: none;">
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tight text-white">Mock API Payload Generator</h1>
+                    <p class="text-sm text-slate-400 mt-0.5">Generate realistic test data rows instantly from any schema structure.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
+                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider">Base Template JSON</div>
+                        <textarea x-model="mockInput" class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
+                        <div class="p-3 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between">
+                            <span class="text-xs text-slate-400">Rows: <strong x-text="mockRows" class="text-white"></strong></span>
+                            <input type="range" min="1" max="20" x-model="mockRows" class="accent-indigo-600">
+                            <button @click="generateMock()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-1.5 rounded font-semibold">Generate Mock Data</button>
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
-                        <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-                            <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider">Base Template JSON</div>
-                            <textarea x-model="mockInput" class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
-                            <div class="p-3 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between">
-                                <span class="text-xs text-slate-400">Rows: <strong x-text="mockRows" class="text-white"></strong></span>
-                                <input type="range" min="1" max="20" x-model="mockRows" class="accent-indigo-600">
-                                <button @click="generateMock()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-1.5 rounded font-semibold">Generate Mock Data</button>
-                            </div>
+                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider flex justify-between">
+                            <span>Generated Mock Dataset</span>
+                            <button @click="navigator.clipboard.writeText(mockOutput)" class="text-indigo-400 hover:underline">Copy JSON</button>
                         </div>
-
-                        <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-                            <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider flex justify-between">
-                                <span>Generated Mock Dataset</span>
-                                <button @click="navigator.clipboard.writeText(mockOutput)" class="text-indigo-400 hover:underline">Copy JSON</button>
-                            </div>
-                            <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-emerald-300 overflow-auto select-all"><code x-text="mockOutput"></code></pre>
-                        </div>
+                        <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-emerald-300 overflow-auto select-all"><code x-text="mockOutput"></code></pre>
                     </div>
                 </div>
-            </template>
+            </div>
 
             <!-- Configuration & History Toolbar -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col space-y-3">
@@ -171,19 +167,16 @@
                     </div>
                 </div>
 
-                <!-- Interactive History Dropdown Chips -->
-                <template x-if="history.length > 0">
-                    <div class="border-t border-slate-800 pt-3 flex flex-wrap gap-2 items-center">
-                        <span class="text-[11px] text-slate-500 uppercase tracking-wider">Recent:</span>
+                <!-- Reliable History Dropdown Select Bar -->
+                <div class="border-t border-slate-800 pt-3 flex items-center gap-3">
+                    <span class="text-[11px] text-slate-500 uppercase tracking-wider whitespace-nowrap">Load Recent:</span>
+                    <select @change="loadHistory($event.target.value);$event.target.value='';" class="bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 w-full">
+                        <option value="">-- Select past conversion --</option>
                         <template x-for="(item, index) in history" :key="index">
-                            <button @click="loadHistory(item.fullJson)" 
-                                    class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs px-2.5 py-1 rounded-md transition truncate max-w-[180px]"
-                                    :title="item.fullJson">
-                                <span x-text="item.date + ' — ' + item.snippet"></span>
-                            </button>
+                            <option :value="item.fullJson" x-text="item.date + ' — ' + item.snippet"></option>
                         </template>
-                    </div>
-                </template>
+                    </select>
+                </div>
             </div>
 
         </div>
@@ -245,6 +238,7 @@
                 },
 
                 loadHistory(jsonStr) {
+                    if (!jsonStr) return;
                     this.inputJson = jsonStr;
                     this.activeTool = 'synth';
                     this.generate();
@@ -288,7 +282,7 @@
                             this.outputCode = res.trim();
                         }
 
-                        // Save history with full payload retention (prevent duplicates of the exact same string)
+                        // Save history (prevent duplicates)
                         if (!this.history.some(h => h.fullJson === this.inputJson)) {
                             this.history.unshift({ 
                                 date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), 
@@ -331,7 +325,7 @@
                                     lines.push(`  ${safeKey}${opt}: ${childName}[];`);
                                 } else {
                                     const stype = sub.length > 0 ? typeof sub[0] : 'any';
-                                    lines.push(`  ${safeKey}${opt}: ${stype}[];`);
+                                    lines.push(`  ${safeKey}${opt}: ${stype}[];`;
                                 }
                             } else if (typeof sub === 'object') {
                                 const childName = this.capitalize(key);
@@ -475,4 +469,4 @@
         }
     </script>
 </body>
-</html> 
+    </html>
