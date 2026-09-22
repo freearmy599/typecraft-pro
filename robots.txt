@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://typecraft-pro.pages.dev/sitemap.xml
