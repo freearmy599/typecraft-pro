@@ -9,7 +9,7 @@
     <!-- Google Search Console Verification -->
     <meta name="google-site-verification" content="PX1GUx4n5IMrOn5YxaKtNA2Q8w2ufkbp3Yto3KL2KlU" />
 
-    <!-- Google AdSense Verification Code -->
+    <!-- Google AdSense Auto Ads Code -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6062724999261135" crossorigin="anonymous"></script>
 
     <!-- Tailwind CSS CDN -->
@@ -63,272 +63,340 @@
                 <button @click="activeTool = 'base64'" :class="activeTool === 'base64' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Base64</button>
                 <button @click="activeTool = 'sql'" :class="activeTool === 'sql' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">SQL</button>
                 <button @click="activeTool = 'cron'" :class="activeTool === 'cron' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Cron</button>
+                <button @click="activeTool = 'game'" :class="activeTool === 'game' ? 'bg-amber-600 text-white shadow' : 'text-amber-400 hover:text-amber-300'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">🎮 Arcade RPG</button>
             </div>
         </div>
     </header>
 
-    <!-- Mobile Tool Switcher Bar (Scrollable for smaller screens) -->
+    <!-- Mobile Tool Switcher Bar (Scrollable) -->
     <div class="md:hidden bg-slate-900/80 border-b border-slate-800 px-4 py-2 flex space-x-2 overflow-x-auto">
-        <button @click="activeTool = 'synth'" :class="activeTool === 'synth' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">Synthesizer</button>
-        <button @click="activeTool = 'mock'" :class="activeTool === 'mock' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">Mock Data</button>
-        <button @click="activeTool = 'jwt'" :class="activeTool === 'jwt' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">JWT Decoder</button>
-        <button @click="activeTool = 'base64'" :class="activeTool === 'base64' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">Base64</button>
-        <button @click="activeTool = 'sql'" :class="activeTool === 'sql' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">SQL Formatter</button>
-        <button @click="activeTool = 'cron'" :class="activeTool === 'cron' ? 'bg-indigo-600 text-white shadow' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">Cron Explainer</button>
+        <button @click="activeTool = 'synth'" :class="activeTool === 'synth' ? 'bg-indigo-600 text-white' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">Synthesizer</button>
+        <button @click="activeTool = 'mock'" :class="activeTool === 'mock' ? 'bg-indigo-600 text-white' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">Mock Data</button>
+        <button @click="activeTool = 'jwt'" :class="activeTool === 'jwt' ? 'bg-indigo-600 text-white' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">JWT</button>
+        <button @click="activeTool = 'base64'" :class="activeTool === 'base64' ? 'bg-indigo-600 text-white' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">Base64</button>
+        <button @click="activeTool = 'sql'" :class="activeTool === 'sql' ? 'bg-indigo-600 text-white' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">SQL</button>
+        <button @click="activeTool = 'cron'" :class="activeTool === 'cron' ? 'bg-indigo-600 text-white' : 'bg-slate-950 text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">Cron</button>
+        <button @click="activeTool = 'game'" :class="activeTool === 'game' ? 'bg-amber-600 text-white' : 'bg-slate-950 text-amber-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap">🎮 Arcade RPG</button>
     </div>
 
-    <!-- Top Leaderboard Ad Slot -->
-    <div class="w-full bg-slate-900/30 border-b border-slate-900 py-3">
-        <div class="max-w-7xl mx-auto px-4 flex justify-center">
-            <div class="w-full max-w-[728px] h-[90px] bg-slate-900/80 border border-dashed border-slate-800 rounded-lg flex items-center justify-center text-xs text-slate-600 uppercase tracking-widest select-none">
-                <span>Advertisement (Leaderboard 728x90)</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Workspace App Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- Main Workspace App Container (Clean Full-Width Layout) -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full flex flex-col space-y-6">
         
-        <!-- Left Workspace Column (Span 9) -->
-        <div class="lg:col-span-9 flex flex-col space-y-6">
-            
-            <!-- Tool 1: Schema Synthesizer -->
-            <div x-show="activeTool === 'synth'" class="flex flex-col space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 class="text-2xl font-extrabold tracking-tight text-white">Advanced Code & Schema Synthesizer</h1>
-                        <p class="text-sm text-slate-400 mt-0.5">Convert JSON into TypeScript, Zod, or Pydantic. Press <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs">Ctrl + Enter</kbd> to run.</p>
-                    </div>
-                    <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl self-start">
-                        <button @click="setLang('ts')" :class="lang === 'ts' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">TS</button>
-                        <button @click="setLang('zod')" :class="lang === 'zod' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Zod</button>
-                        <button @click="setLang('pydantic')" :class="lang === 'pydantic' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Pydantic</button>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
-                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
-                            <span class="font-semibold text-slate-300 uppercase tracking-wider">Input JSON</span>
-                            <div class="space-x-2">
-                                <button @click="formatJsonInput()" class="text-slate-400 hover:text-slate-200">Format</button>
-                                <span>|</span>
-                                <button @click="loadSample()" class="text-indigo-400 font-medium">Sample</button>
-                                <span>|</span>
-                                <button @click="inputJson = ''; generate();" class="text-slate-400">Clear</button>
-                            </div>
-                        </div>
-                        <textarea x-model="inputJson" @input="generate()" placeholder="Paste JSON payload..." class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
-                        <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs">
-                            <span x-text="errorMsg ? errorMsg : '✓ Valid JSON'" :class="errorMsg ? 'text-rose-400' : 'text-emerald-400'"></span>
-                            <span class="text-slate-500" x-text="inputJson.length + ' chars'"></span>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl relative">
-                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
-                            <span class="font-semibold text-slate-300 uppercase tracking-wider" x-text="outputHeaderTitle"></span>
-                            <button @click="copyOutput()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded font-medium transition" x-text="copied ? 'Copied!' : 'Copy Code'"></button>
-                        </div>
-                        <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-indigo-200 overflow-auto select-all"><code x-text="outputCode"></code></pre>
-                        <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
-                            <span>Client-side execution</span>
-                            <span x-text="outputCode.split('\n').length + ' lines'"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tool 2: Mock API Data Generator -->
-            <div x-show="activeTool === 'mock'" class="flex flex-col space-y-6" style="display: none;">
+        <!-- Tool 1: Schema Synthesizer -->
+        <div x-show="activeTool === 'synth'" class="flex flex-col space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 class="text-2xl font-extrabold tracking-tight text-white">Mock API Payload Generator</h1>
-                    <p class="text-sm text-slate-400 mt-0.5">Generate realistic test data rows instantly from any schema structure.</p>
+                    <h1 class="text-2xl font-extrabold tracking-tight text-white">Advanced Code & Schema Synthesizer</h1>
+                    <p class="text-sm text-slate-400 mt-0.5">Convert JSON into TypeScript, Zod, or Pydantic. Press <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs">Ctrl + Enter</kbd> to run.</p>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
-                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider">Base Template JSON</div>
-                        <textarea x-model="mockInput" class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
-                        <div class="p-3 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between">
-                            <span class="text-xs text-slate-400">Rows: <strong x-text="mockRows" class="text-white"></strong></span>
-                            <input type="range" min="1" max="20" x-model="mockRows" class="accent-indigo-600">
-                            <button @click="generateMock()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-1.5 rounded font-semibold">Generate Mock Data</button>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider flex justify-between">
-                            <span>Generated Mock Dataset</span>
-                            <button @click="navigator.clipboard.writeText(mockOutput)" class="text-indigo-400 hover:underline">Copy JSON</button>
-                        </div>
-                        <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-emerald-300 overflow-auto select-all"><code x-text="mockOutput"></code></pre>
-                    </div>
+                <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl self-start">
+                    <button @click="setLang('ts')" :class="lang === 'ts' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">TS</button>
+                    <button @click="setLang('zod')" :class="lang === 'zod' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Zod</button>
+                    <button @click="setLang('pydantic')" :class="lang === 'pydantic' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Pydantic</button>
                 </div>
             </div>
 
-            <!-- Tool 3: JWT Decoder -->
-            <div x-show="activeTool === 'jwt'" class="flex flex-col space-y-6" style="display: none;">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 class="text-2xl font-extrabold tracking-tight text-white">JWT Decoder & Inspector</h1>
-                        <p class="text-sm text-slate-400 mt-0.5">Paste any JSON Web Token (JWT) to inspect header, payload claims, and expiration.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
+                <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                    <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
+                        <span class="font-semibold text-slate-300 uppercase tracking-wider">Input JSON</span>
+                        <div class="space-x-2">
+                            <button @click="formatJsonInput()" class="text-slate-400 hover:text-slate-200">Format</button>
+                            <span>|</span>
+                            <button @click="loadSample()" class="text-indigo-400 font-medium">Sample</button>
+                            <span>|</span>
+                            <button @click="inputJson = ''; generate();" class="text-slate-400">Clear</button>
+                        </div>
                     </div>
-                    <button @click="loadJwtSample()" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-indigo-400 text-xs px-3 py-1.5 rounded-lg font-medium transition self-start">Load Sample Token</button>
+                    <textarea x-model="inputJson" @input="generate()" placeholder="Paste JSON payload..." class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
+                    <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs">
+                        <span x-text="errorMsg ? errorMsg : '✓ Valid JSON'" :class="errorMsg ? 'text-rose-400' : 'text-emerald-400'"></span>
+                        <span class="text-slate-500" x-text="inputJson.length + ' chars'"></span>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[580px]">
-                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl md:col-span-1">
-                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider">Encoded JWT Token</div>
-                        <textarea x-model="jwtInput" @input="decodeJwt()" placeholder="Paste eyJhbGciOi..." class="w-full flex-grow bg-transparent p-4 font-mono text-xs text-slate-200 focus:outline-none resize-none break-all"></textarea>
-                        <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs">
-                            <span x-text="jwtStatus" :class="jwtValid ? 'text-emerald-400' : 'text-rose-400'"></span>
-                            <button @click="jwtInput = ''; decodeJwt();" class="text-slate-500 hover:text-slate-300">Clear</button>
-                        </div>
+                <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl relative">
+                    <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
+                        <span class="font-semibold text-slate-300 uppercase tracking-wider" x-text="outputHeaderTitle"></span>
+                        <button @click="copyOutput()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded font-medium transition" x-text="copied ? 'Copied!' : 'Copy Code'"></button>
                     </div>
-
-                    <div class="flex flex-col md:col-span-2 space-y-4">
-                        <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl h-[190px]">
-                            <div class="bg-slate-800/60 px-4 py-2 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider">Decoded Header</div>
-                            <pre class="w-full flex-grow bg-transparent p-3 font-mono text-xs text-amber-300 overflow-auto select-all"><code x-text="jwtHeader"></code></pre>
-                        </div>
-                        <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl flex-grow">
-                            <div class="bg-slate-800/60 px-4 py-2 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider flex justify-between">
-                                <span>Decoded Payload</span>
-                                <span x-text="jwtExpiryText" :class="jwtExpired ? 'text-rose-400' : 'text-emerald-400'" class="text-[11px] font-normal"></span>
-                            </div>
-                            <pre class="w-full flex-grow bg-transparent p-3 font-mono text-xs text-indigo-200 overflow-auto select-all"><code x-text="jwtPayload"></code></pre>
-                        </div>
+                    <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-indigo-200 overflow-auto select-all"><code x-text="outputCode"></code></pre>
+                    <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
+                        <span>Client-side execution</span>
+                        <span x-text="outputCode.split('\n').length + ' lines'"></span>
                     </div>
                 </div>
             </div>
-
-            <!-- Tool 4: Base64 & URL Transformer -->
-            <div x-show="activeTool === 'base64'" class="flex flex-col space-y-6" style="display: none;">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 class="text-2xl font-extrabold tracking-tight text-white">Base64 & URL Transformer</h1>
-                        <p class="text-sm text-slate-400 mt-0.5">Encode and decode text, query parameters, or configurations instantly.</p>
-                    </div>
-                    <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl self-start">
-                        <button @click="base64Mode = 'encode'; transformBase64();" :class="base64Mode === 'encode' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Encode</button>
-                        <button @click="base64Mode = 'decode'; transformBase64();" :class="base64Mode === 'decode' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Decode</button>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
-                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
-                            <span class="font-semibold text-slate-300 uppercase tracking-wider" x-text="base64Mode === 'encode' ? 'Plain Text Input' : 'Base64 Input'"></span>
-                            <button @click="base64Input = ''; transformBase64();" class="text-slate-400 hover:text-slate-200">Clear</button>
-                        </div>
-                        <textarea x-model="base64Input" @input="transformBase64()" placeholder="Type content here..." class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
-                    </div>
-
-                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
-                            <span class="font-semibold text-slate-300 uppercase tracking-wider" x-text="base64Mode === 'encode' ? 'Base64 Output' : 'Plain Text Output'"></span>
-                            <button @click="navigator.clipboard.writeText(base64Output)" class="text-indigo-400 font-medium hover:underline">Copy Result</button>
-                        </div>
-                        <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-indigo-200 overflow-auto select-all"><code x-text="base64Output"></code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tool 5: SQL Formatter & Minifier -->
-            <div x-show="activeTool === 'sql'" class="flex flex-col space-y-6" style="display: none;">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 class="text-2xl font-extrabold tracking-tight text-white">SQL Query Formatter</h1>
-                        <p class="text-sm text-slate-400 mt-0.5">Clean up messy SQL queries with uppercase keywords and standardized indentation.</p>
-                    </div>
-                    <button @click="loadSqlSample()" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-indigo-400 text-xs px-3 py-1.5 rounded-lg font-medium transition self-start">Load Sample SQL</button>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
-                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider flex justify-between">
-                            <span>Raw SQL Input</span>
-                            <button @click="sqlInput = ''; formatSql();" class="text-slate-400 hover:text-slate-200">Clear</button>
-                        </div>
-                        <textarea x-model="sqlInput" @input="formatSql()" placeholder="SELECT * FROM users WHERE..." class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
-                    </div>
-
-                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-                        <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
-                            <span class="font-semibold text-slate-300 uppercase tracking-wider">Formatted SQL Output</span>
-                            <button @click="navigator.clipboard.writeText(sqlOutput)" class="text-indigo-400 font-medium hover:underline">Copy SQL</button>
-                        </div>
-                        <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-emerald-300 overflow-auto select-all"><code x-text="sqlOutput"></code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tool 6: Cron Expression Explainer -->
-            <div x-show="activeTool === 'cron'" class="flex flex-col space-y-6" style="display: none;">
-                <div>
-                    <h1 class="text-2xl font-extrabold tracking-tight text-white">Cron Expression Explainer</h1>
-                    <p class="text-sm text-slate-400 mt-0.5">Understand complex cron schedules with plain-English breakdowns.</p>
-                </div>
-
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-2xl flex flex-col space-y-6">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Cron Schedule String</label>
-                        <div class="flex gap-3">
-                            <input type="text" x-model="cronInput" @input="explainCron()" placeholder="e.g. 0 12 * * ?" class="flex-grow bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 font-mono text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
-                            <button @click="cronInput = '0 0 * * *'; explainCron();" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 rounded-xl font-medium transition">Daily</button>
-                            <button @click="cronInput = '*/15 * * * *'; explainCron();" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 rounded-xl font-medium transition">Every 15 Min</button>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-6 flex flex-col space-y-2">
-                        <span class="text-xs text-indigo-400 font-semibold uppercase tracking-wider">Plain English Translation</span>
-                        <p class="text-lg font-medium text-slate-100" x-text="cronExplanation"></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Configuration & History Toolbar (Synthesizer specific) -->
-            <div x-show="activeTool === 'synth'" class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col space-y-3">
-                <div class="flex flex-wrap items-center justify-between gap-4">
-                    <div class="flex items-center space-x-6 text-sm">
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="checkbox" x-model="options.optionalFields" @change="generate()" class="rounded bg-slate-800 border-slate-700 text-indigo-600">
-                            <span class="text-slate-300 text-xs">Optional Fields (?)</span>
-                        </label>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xs text-slate-400">Root Name:</span>
-                            <input type="text" x-model="options.rootName" @input="generate()" class="bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-slate-200 focus:outline-none w-28">
-                        </div>
-                    </div>
-                    <div class="text-xs text-slate-400">
-                        History: <strong class="text-indigo-400" x-text="history.length"></strong> items
-                    </div>
-                </div>
-
-                <div class="border-t border-slate-800 pt-3 flex items-center gap-3">
-                    <span class="text-[11px] text-slate-500 uppercase tracking-wider whitespace-nowrap">Load Recent:</span>
-                    <select @change="loadHistory($event.target.value); $event.target.value='';" class="bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 w-full">
-                        <option value="">-- Select past conversion --</option>
-                        <template x-for="(item, index) in history" :key="index">
-                            <option :value="item.fullJson" x-text="item.date + ' — ' + item.snippet"></option>
-                        </template>
-                    </select>
-                </div>
-            </div>
-
         </div>
 
-        <!-- Right Sidebar Ad Column (Span 3) -->
-        <aside class="lg:col-span-3 flex flex-col space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col items-center justify-center min-h-[300px] text-center sticky top-24">
-                <span class="text-[10px] text-slate-600 uppercase tracking-widest mb-3">Sponsored Content</span>
-                <div class="w-full h-[250px] bg-slate-950/60 border border-dashed border-slate-800 rounded-lg flex items-center justify-center text-xs text-slate-600">
-                    <span>AdSense Sidebar Slot (300x250)</span>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-3">Ads support free developer tools.</p>
+        <!-- Tool 2: Mock API Data Generator -->
+        <div x-show="activeTool === 'mock'" class="flex flex-col space-y-6" style="display: none;">
+            <div>
+                <h1 class="text-2xl font-extrabold tracking-tight text-white">Mock API Payload Generator</h1>
+                <p class="text-sm text-slate-400 mt-0.5">Generate realistic test data rows instantly from any schema structure.</p>
             </div>
-        </aside>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
+                <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                    <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider">Base Template JSON</div>
+                    <textarea x-model="mockInput" class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
+                    <div class="p-3 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between">
+                        <span class="text-xs text-slate-400">Rows: <strong x-text="mockRows" class="text-white"></strong></span>
+                        <input type="range" min="1" max="20" x-model="mockRows" class="accent-indigo-600">
+                        <button @click="generateMock()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-1.5 rounded font-semibold">Generate Mock Data</button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                    <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider flex justify-between">
+                        <span>Generated Mock Dataset</span>
+                        <button @click="navigator.clipboard.writeText(mockOutput)" class="text-indigo-400 hover:underline">Copy JSON</button>
+                    </div>
+                    <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-emerald-300 overflow-auto select-all"><code x-text="mockOutput"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool 3: JWT Decoder -->
+        <div x-show="activeTool === 'jwt'" class="flex flex-col space-y-6" style="display: none;">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tight text-white">JWT Decoder & Inspector</h1>
+                    <p class="text-sm text-slate-400 mt-0.5">Paste any JSON Web Token (JWT) to inspect header, payload claims, and expiration.</p>
+                </div>
+                <button @click="loadJwtSample()" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-indigo-400 text-xs px-3 py-1.5 rounded-lg font-medium transition self-start">Load Sample Token</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[580px]">
+                <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl md:col-span-1">
+                    <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider">Encoded JWT Token</div>
+                    <textarea x-model="jwtInput" @input="decodeJwt()" placeholder="Paste eyJhbGciOi..." class="w-full flex-grow bg-transparent p-4 font-mono text-xs text-slate-200 focus:outline-none resize-none break-all"></textarea>
+                    <div class="bg-slate-950/60 px-4 py-2 border-t border-slate-800 flex justify-between items-center text-xs">
+                        <span x-text="jwtStatus" :class="jwtValid ? 'text-emerald-400' : 'text-rose-400'"></span>
+                        <button @click="jwtInput = ''; decodeJwt();" class="text-slate-500 hover:text-slate-300">Clear</button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:col-span-2 space-y-4">
+                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl h-[190px]">
+                        <div class="bg-slate-800/60 px-4 py-2 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider">Decoded Header</div>
+                        <pre class="w-full flex-grow bg-transparent p-3 font-mono text-xs text-amber-300 overflow-auto select-all"><code x-text="jwtHeader"></code></pre>
+                    </div>
+                    <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl flex-grow">
+                        <div class="bg-slate-800/60 px-4 py-2 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider flex justify-between">
+                            <span>Decoded Payload</span>
+                            <span x-text="jwtExpiryText" :class="jwtExpired ? 'text-rose-400' : 'text-emerald-400'" class="text-[11px] font-normal"></span>
+                        </div>
+                        <pre class="w-full flex-grow bg-transparent p-3 font-mono text-xs text-indigo-200 overflow-auto select-all"><code x-text="jwtPayload"></code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool 4: Base64 & URL Transformer -->
+        <div x-show="activeTool === 'base64'" class="flex flex-col space-y-6" style="display: none;">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tight text-white">Base64 & URL Transformer</h1>
+                    <p class="text-sm text-slate-400 mt-0.5">Encode and decode text, query parameters, or configurations instantly.</p>
+                </div>
+                <div class="flex bg-slate-900 p-1 border border-slate-800 rounded-xl self-start">
+                    <button @click="base64Mode = 'encode'; transformBase64();" :class="base64Mode === 'encode' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Encode</button>
+                    <button @click="base64Mode = 'decode'; transformBase64();" :class="base64Mode === 'decode' ? 'bg-indigo-600 text-white' : 'text-slate-400'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">Decode</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
+                <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                    <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
+                        <span class="font-semibold text-slate-300 uppercase tracking-wider" x-text="base64Mode === 'encode' ? 'Plain Text Input' : 'Base64 Input'"></span>
+                        <button @click="base64Input = ''; transformBase64();" class="text-slate-400 hover:text-slate-200">Clear</button>
+                    </div>
+                    <textarea x-model="base64Input" @input="transformBase64()" placeholder="Type content here..." class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
+                </div>
+
+                <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                    <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
+                        <span class="font-semibold text-slate-300 uppercase tracking-wider" x-text="base64Mode === 'encode' ? 'Base64 Output' : 'Plain Text Output'"></span>
+                        <button @click="navigator.clipboard.writeText(base64Output)" class="text-indigo-400 font-medium hover:underline">Copy Result</button>
+                    </div>
+                    <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-indigo-200 overflow-auto select-all"><code x-text="base64Output"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool 5: SQL Formatter & Minifier -->
+        <div x-show="activeTool === 'sql'" class="flex flex-col space-y-6" style="display: none;">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tight text-white">SQL Query Formatter</h1>
+                    <p class="text-sm text-slate-400 mt-0.5">Clean up messy SQL queries with uppercase keywords and standardized indentation.</p>
+                </div>
+                <button @click="loadSqlSample()" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-indigo-400 text-xs px-3 py-1.5 rounded-lg font-medium transition self-start">Load Sample SQL</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-[580px]">
+                <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                    <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 text-xs font-semibold text-slate-300 uppercase tracking-wider flex justify-between">
+                        <span>Raw SQL Input</span>
+                        <button @click="sqlInput = ''; formatSql();" class="text-slate-400 hover:text-slate-200">Clear</button>
+                    </div>
+                    <textarea x-model="sqlInput" @input="formatSql()" placeholder="SELECT * FROM users WHERE..." class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none resize-none"></textarea>
+                </div>
+
+                <div class="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                    <div class="bg-slate-800/60 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs">
+                        <span class="font-semibold text-slate-300 uppercase tracking-wider">Formatted SQL Output</span>
+                        <button @click="navigator.clipboard.writeText(sqlOutput)" class="text-indigo-400 font-medium hover:underline">Copy SQL</button>
+                    </div>
+                    <pre class="w-full flex-grow bg-transparent p-4 font-mono text-xs sm:text-sm text-emerald-300 overflow-auto select-all"><code x-text="sqlOutput"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool 6: Cron Expression Explainer -->
+        <div x-show="activeTool === 'cron'" class="flex flex-col space-y-6" style="display: none;">
+            <div>
+                <h1 class="text-2xl font-extrabold tracking-tight text-white">Cron Expression Explainer</h1>
+                <p class="text-sm text-slate-400 mt-0.5">Understand complex cron schedules with plain-English breakdowns.</p>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-2xl flex flex-col space-y-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Cron Schedule String</label>
+                    <div class="flex gap-3">
+                        <input type="text" x-model="cronInput" @input="explainCron()" placeholder="e.g. 0 12 * * ?" class="flex-grow bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 font-mono text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+                        <button @click="cronInput = '0 0 * * *'; explainCron();" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 rounded-xl font-medium transition">Daily</button>
+                        <button @click="cronInput = '*/15 * * * *'; explainCron();" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 rounded-xl font-medium transition">Every 15 Min</button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-6 flex flex-col space-y-2">
+                    <span class="text-xs text-indigo-400 font-semibold uppercase tracking-wider">Plain English Translation</span>
+                    <p class="text-lg font-medium text-slate-100" x-text="cronExplanation"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool 7: Shadow Realms Arcade RPG -->
+        <div x-show="activeTool === 'game'" class="flex flex-col space-y-6" style="display: none;">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tight text-amber-400 flex items-center gap-2">
+                        <span>⚔️ Shadow Realms: Null Dynasty</span>
+                    </h1>
+                    <p class="text-sm text-slate-400 mt-0.5">Use <kbd class="px-1.5 py-0.5 bg-slate-800 text-amber-300 rounded text-xs font-mono">W A S D</kbd> to explore the dungeon, defeat void entities, and loot artifacts.</p>
+                </div>
+                <button @click="resetGame()" class="bg-amber-600 hover:bg-amber-500 text-white text-xs px-4 py-2 rounded-lg font-bold transition shadow-lg shadow-amber-600/20 self-start">New Run</button>
+            </div>
+
+            <!-- Game HUD & Stats Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-col">
+                    <span class="text-[10px] uppercase font-bold text-slate-500">Player HP</span>
+                    <div class="flex items-center gap-2 mt-1">
+                        <div class="flex-grow bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-800">
+                            <div class="bg-emerald-500 h-full transition-all duration-300" :style="`width: ${(player.hp / player.maxHp) * 100}%`"></div>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-emerald-400" x-text="player.hp + '/' + player.maxHp"></span>
+                    </div>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-col">
+                    <span class="text-[10px] uppercase font-bold text-slate-500">Dungeon Floor</span>
+                    <span class="text-base font-extrabold text-amber-400 mt-0.5" x-text="'Floor ' + dungeonLevel"></span>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-col">
+                    <span class="text-[10px] uppercase font-bold text-slate-500">Attack Power</span>
+                    <span class="text-base font-extrabold text-indigo-400 mt-0.5" x-text="player.atk"></span>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-col">
+                    <span class="text-[10px] uppercase font-bold text-slate-500">Null Shards (Score)</span>
+                    <span class="text-base font-extrabold text-purple-400 mt-0.5" x-text="player.gold"></span>
+                </div>
+            </div>
+
+            <!-- Main Dungeon Arena & Combat View -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                <!-- Grid Visualizer (2 Cols) -->
+                <div class="md:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col items-center justify-center min-h-[380px] relative overflow-hidden shadow-2xl">
+                    <div class="grid grid-cols-8 gap-2 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <template x-for="(row, rIdx) in grid" :key="rIdx">
+                            <template x-for="(cell, cIdx) in row" :key="cIdx">
+                                <div @click="clickMove(rIdx, cIdx)" 
+                                     class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-lg font-bold cursor-pointer transition select-none border"
+                                     :class="{
+                                         'bg-indigo-950/80 border-indigo-500 text-white shadow-lg shadow-indigo-500/30 scale-105': cell.type === 'player',
+                                         'bg-rose-950/80 border-rose-600 text-rose-300 animate-pulse': cell.type === 'enemy',
+                                         'bg-amber-950/80 border-amber-500 text-amber-300': cell.type === 'chest',
+                                         'bg-emerald-950/80 border-emerald-600 text-emerald-300': cell.type === 'exit',
+                                         'bg-slate-900/60 border-slate-800 hover:border-slate-700 text-slate-700': cell.type === 'empty'
+                                     }"
+                                     x-text="cell.icon">
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                    <div class="absolute bottom-2 right-4 text-[10px] text-slate-500 uppercase tracking-widest">Controls: W A S D or Click Tiles</div>
+                </div>
+
+                <!-- Side Status & Inventory Panel (1 Col) -->
+                <div class="flex flex-col space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col h-[180px] shadow-xl">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Combat Feed Log</span>
+                        <div class="flex-grow overflow-y-auto space-y-1 font-mono text-xs pr-1">
+                            <template x-for="log in logs">
+                                <p class="text-slate-300 border-l-2 border-amber-500 pl-2 py-0.5" x-text="log"></p>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col flex-grow shadow-xl">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Equipped Relic Gear</span>
+                        <div class="flex flex-col space-y-2">
+                            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs">
+                                <span class="text-slate-400">Weapon</span>
+                                <span class="font-mono font-bold text-amber-300" x-text="player.weapon"></span>
+                            </div>
+                            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs">
+                                <span class="text-slate-400">Armor</span>
+                                <span class="font-mono font-bold text-indigo-300" x-text="player.armor"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Configuration & History Toolbar (Synthesizer specific) -->
+        <div x-show="activeTool === 'synth'" class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-6 text-sm">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" x-model="options.optionalFields" @change="generate()" class="rounded bg-slate-800 border-slate-700 text-indigo-600">
+                        <span class="text-slate-300 text-xs">Optional Fields (?)</span>
+                    </label>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-slate-400">Root Name:</span>
+                        <input type="text" x-model="options.rootName" @input="generate()" class="bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-slate-200 focus:outline-none w-28">
+                    </div>
+                </div>
+                <div class="text-xs text-slate-400">
+                    History: <strong class="text-indigo-400" x-text="history.length"></strong> items
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-3 flex items-center gap-3">
+                <span class="text-[11px] text-slate-500 uppercase tracking-wider whitespace-nowrap">Load Recent:</span>
+                <select @change="loadHistory($event.target.value); $event.target.value='';" class="bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 w-full">
+                    <option value="">-- Select past conversion --</option>
+                    <template x-for="(item, index) in history" :key="index">
+                        <option :value="item.fullJson" x-text="item.date + ' — ' + item.snippet"></option>
+                    </template>
+                </select>
+            </div>
+        </div>
 
     </main>
 
@@ -371,6 +439,17 @@
 
                 cronInput: '0 12 * * *',
                 cronExplanation: 'At 12:00 PM every day.',
+
+                // Arcade Game State
+                dungeonLevel: 1,
+                player: { x: 0, y: 0, hp: 100, maxHp: 100, atk: 15, gold: 0, weapon: 'Null Blade (Tier 1)', armor: 'Void Vest' },
+                gridSize: 8,
+                grid: [],
+                logs: ['Entered the Null Dynasty dungeon. Defeat void beasts!'],
+
+                init() {
+                    this.generateDungeon();
+                },
 
                 get outputHeaderTitle() {
                     if (this.lang === 'ts') return 'TypeScript Interfaces';
@@ -487,6 +566,105 @@
                         return;
                     }
                     this.cronExplanation = `Runs at minute ${parts[0]}, hour ${parts[1]}, on day ${parts[2]} of the month, in month ${parts[3]}, on weekday ${parts[4]}.`;
+                },
+
+                // Arcade Game Methods
+                generateDungeon() {
+                    this.grid = [];
+                    for (let r = 0; r < this.gridSize; r++) {
+                        let row = [];
+                        for (let c = 0; c < this.gridSize; c++) {
+                            row.push({ type: 'empty', icon: '' });
+                        }
+                        this.grid.push(row);
+                    }
+                    this.player.x = 0; this.player.y = 0;
+                    this.grid[0][0] = { type: 'player', icon: '🧙‍♂️' };
+                    this.grid[7][7] = { type: 'exit', icon: '🌀' };
+
+                    for (let i = 0; i < 5 + this.dungeonLevel; i++) {
+                        let rx = Math.floor(Math.random() * this.gridSize);
+                        let ry = Math.floor(Math.random() * this.gridSize);
+                        if ((rx !== 0 || ry !== 0) && (rx !== 7 || ry !== 7)) {
+                            this.grid[ry][rx] = { type: 'enemy', icon: '👾', hp: 30 * this.dungeonLevel };
+                        }
+                    }
+                    for (let i = 0; i < 3; i++) {
+                        let rx = Math.floor(Math.random() * this.gridSize);
+                        let ry = Math.floor(Math.random() * this.gridSize);
+                        if (this.grid[ry][rx].type === 'empty') {
+                            this.grid[ry][rx] = { type: 'chest', icon: '🎁' };
+                        }
+                    }
+                },
+
+                handleKeydown(e) {
+                    if (this.activeTool !== 'game') return;
+                    let dx = 0, dy = 0;
+                    if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') dy = -1;
+                    if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') dy = 1;
+                    if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') dx = -1;
+                    if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') dx = 1;
+                    if (dx !== 0 || dy !== 0) {
+                        this.movePlayer(this.player.y + dy, this.player.x + dx);
+                    }
+                },
+
+                clickMove(r, c) {
+                    if (Math.abs(r - this.player.y) + Math.abs(c - this.player.x) === 1) {
+                        this.movePlayer(r, c);
+                    }
+                },
+
+                movePlayer(newY, newX) {
+                    if (newY < 0 || newY >= this.gridSize || newX < 0 || newX >= this.gridSize) return;
+                    let target = this.grid[newY][newX];
+                    if (target.type === 'enemy') {
+                        target.hp -= this.player.atk;
+                        if (target.hp <= 0) {
+                            this.logs.unshift('Defeated Void Beast! +50 Shards.');
+                            this.player.gold += 50;
+                            this.grid[newY][newX] = { type: 'empty', icon: '' };
+                        } else {
+                            this.player.hp -= 15;
+                            this.logs.unshift('Attacked Void Beast! Took 15 damage.');
+                            if (this.player.hp <= 0) {
+                                alert('You succumbed to the Null Dynasty! Restarting run.');
+                                this.resetGame();
+                                return;
+                            }
+                        }
+                    } else if (target.type === 'chest') {
+                        this.player.atk += 5;
+                        this.player.gold += 100;
+                        this.logs.unshift('Opened chest! Found Relic (+5 Atk, 100 Shards).');
+                        this.grid[newY][newX] = { type: 'empty', icon: '' };
+                        this.executeMove(newY, newX);
+                    } else if (target.type === 'exit') {
+                        this.dungeonLevel++;
+                        this.player.hp = Math.min(this.player.maxHp, this.player.hp + 30);
+                        this.logs.unshift(`Advanced to Floor ${this.dungeonLevel}! HP Restored.`);
+                        this.generateDungeon();
+                        return;
+                    } else if (target.type === 'empty') {
+                        this.executeMove(newY, newX);
+                    }
+                },
+
+                executeMove(newY, newX) {
+                    this.grid[this.player.y][this.player.x] = { type: 'empty', icon: '' };
+                    this.player.y = newY;
+                    this.player.x = newX;
+                    this.grid[newY][newX] = { type: 'player', icon: '🧙‍♂️' };
+                },
+
+                resetGame() {
+                    this.dungeonLevel = 1;
+                    this.player.hp = 100;
+                    this.player.atk = 15;
+                    this.player.gold = 0;
+                    this.logs = ['Started a brand new Null Dynasty run!'];
+                    this.generateDungeon();
                 },
 
                 loadHistory(jsonStr) {
@@ -720,4 +898,4 @@
         }
     </script>
 </body>
-        </html>
+    </html>
